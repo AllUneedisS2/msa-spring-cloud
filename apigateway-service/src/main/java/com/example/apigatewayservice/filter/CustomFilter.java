@@ -31,7 +31,6 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
         });
     }
 
-
     public static class Config {
 
     }
