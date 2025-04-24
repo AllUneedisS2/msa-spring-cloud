@@ -22,5 +22,4 @@ public class SecondServiceController {
         return "Hello World in Second Service.";
     }
 
-
 }
