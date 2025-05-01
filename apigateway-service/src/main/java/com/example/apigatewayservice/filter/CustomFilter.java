@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono;
 @Component
 @Slf4j
 public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Config> {
-    
     public CustomFilter() {
         super(Config.class);
     }
@@ -29,7 +28,6 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
             }));
         });
     }
-
     public static class Config {}
 
 }
