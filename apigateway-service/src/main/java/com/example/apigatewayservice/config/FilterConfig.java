@@ -18,4 +18,5 @@ public class FilterConfig {
                         .uri("http://localhost:8082"))
                 .build();
     }
+
 }
