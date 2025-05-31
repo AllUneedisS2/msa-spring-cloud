@@ -1,9 +1,9 @@
 server:
-  port: 0
+  port: 60000
 
 spring:
-  #  config:
-  #    import: optional:configserver:http://127.0.0.1:8888/
+#  config:
+#    import: optional:configserver:http://127.0.0.1:8888/
   cloud:
     config:
       name: user-service
@@ -13,14 +13,14 @@ spring:
     base-url: http://localhost:9411
     enabled: true
 
-  #  rabbitmq:
-  #    host: 127.0.0.1
-  #    port: 5672
-  #    username: guest
-  #    password: guest
-  #    listener:
-  #      simple:
-  #        prefetch: 5
+#  rabbitmq:
+#    host: 127.0.0.1
+#    port: 5672
+#    username: guest
+#    password: guest
+#    listener:
+#      simple:
+#        prefetch: 5
   h2:
     console:
       enabled: true
@@ -77,3 +77,4 @@ management:
 #token:
 #  expiration_time: 86400000
 #  secret: user_token_test
+
