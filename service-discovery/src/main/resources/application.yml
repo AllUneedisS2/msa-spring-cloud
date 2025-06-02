@@ -23,7 +23,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://DOWONui-MacBookPro.local:8763/eureka/
+      defaultZone: http://aunis2-M1.local:8763/eureka/
   instance:
     hostname: localhost
 
@@ -42,4 +42,4 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8762/eureka/
   instance:
-    hostname: DOWONui-MacBookPro.local
+    hostname: aunis2-M1.local
