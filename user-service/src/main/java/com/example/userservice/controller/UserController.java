@@ -97,8 +97,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized (인증 실패 오류)"),
             @ApiResponse(responseCode = "403", description = "Forbidden (권한이 없는 페이지에 엑세스)"),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR"),
-    }
-    )
+    })
     @GetMapping("/users")
     public ResponseEntity<List<ResponseUser>> getUsers() {
         Iterable<UserEntity> userList = userService.getUserByAll();
