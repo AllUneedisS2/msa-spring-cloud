@@ -50,4 +50,5 @@ public class UserServiceApplication {
 //    public FeignErrorDecoder getFeignErrorDecoder() {
 //        return new FeignErrorDecoder();
 //    }
+    
 }
