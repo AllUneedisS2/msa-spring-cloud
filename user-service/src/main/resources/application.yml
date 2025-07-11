@@ -71,7 +71,6 @@ management:
       exposure:
         include: "*"
 
-
 gateway:
   ip: 10.204.136.204
 

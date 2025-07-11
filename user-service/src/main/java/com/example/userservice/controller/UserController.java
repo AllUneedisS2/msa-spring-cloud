@@ -91,7 +91,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
     }
 
-    @Operation(summary = "전체 사용자 목록조회 API", description = "현재 회원 가입 된 전체 사용자 목록을 조회하기 위한 API")
+    @Operation(summary = "전체 사용자 목록 조회 API", description = "현재 회원 가입 된 전체 사용자 목록을 조회하기 위한 API")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "401", description = "Unauthorized (인증 실패 오류)"),
