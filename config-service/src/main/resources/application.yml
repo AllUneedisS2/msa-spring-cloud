@@ -1,0 +1,33 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/AllUneedisS2/msa-spring-cloud-config
+          default-label: main
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+
+#  rabbitmq:
+#    host: 127.0.0.1
+#    port: 5672
+#    username: guest
+#    password: guest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: env, refresh, health, beans, httpexchanges, busrefresh, info, metrics, prometheus
