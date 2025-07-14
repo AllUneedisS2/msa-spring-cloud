@@ -2,13 +2,13 @@ server:
   port: 60000
 
 spring:
+  application:
+    name: user-service
 #  config:
 #    import: optional:configserver:http://127.0.0.1:8888/
   cloud:
     config:
       name: user-service
-  application:
-    name: user-service
   zipkin:
     base-url: http://localhost:9411
     enabled: true
@@ -38,8 +38,6 @@ spring:
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  #    prefer-ip-address: true
-  #    ip-address: ${server.address}
   client:
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka

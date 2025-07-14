@@ -115,10 +115,9 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "401", description = "Unauthorized (인증 실패 오류)"),
             @ApiResponse(responseCode = "403", description = "Forbidden (권한이 없는 페이지에 엑세스)"),
-            @ApiResponse(responseCode = "404", description = "NOT FOUND (회원 정보가 없을 겨우)"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND (회원 정보가 없을 경우)"),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR"),
-    }
-    )
+    })
     @GetMapping("/users/{userId}")
     public ResponseEntity getUser(@PathVariable("userId") String userId) {
         UserDto userDto = userService.getUserByUserId(userId);
