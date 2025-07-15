@@ -28,13 +28,10 @@ import java.util.function.Supplier;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityNew {
+
     private UserService userService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private Environment env;
-
-    public static final String ALLOWED_IP_ADDRESS = "127.0.0.1";
-    public static final String SUBNET = "/32";
-    public static final IpAddressMatcher ALLOWED_IP_ADDRESS_MATCHER = new IpAddressMatcher(ALLOWED_IP_ADDRESS + SUBNET);
 
     public WebSecurityNew(Environment env, UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.env = env;
@@ -52,7 +49,6 @@ public class WebSecurityNew {
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
         http.csrf( (csrf) -> csrf.disable());
-//        http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests((authz) -> authz
                         .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
@@ -63,11 +59,15 @@ public class WebSecurityNew {
                         .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/swagger-resources/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
-//                        .requestMatchers("/**").access(this::hasIpAddress)
                         .requestMatchers("/**").access(
                                 new WebExpressionAuthorizationManager(
-                                        "hasIpAddress('127.0.0.1') or hasIpAddress('::1') or " +
-                                                "hasIpAddress('172.30.1.44') or hasIpAddress('172.30.1.44/32')")) // host pc ip address
+                                        "hasIpAddress('127.0.0.1') or " +
+                                                       "hasIpAddress('::1') or " +
+                                                       "hasIpAddress('0:0:0:0:0:0:0:1') or " +
+                                                       "hasIpAddress('172.30.1.44') or " +
+                                                       "hasIpAddress('172.30.1.44/32')"
+                                )
+                        ) // host pc ip address
                         .anyRequest().authenticated()
                 )
                 .authenticationManager(authenticationManager)
@@ -81,10 +81,6 @@ public class WebSecurityNew {
         http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()));
 
         return http.build();
-    }
-
-    private AuthorizationDecision hasIpAddress(Supplier<Authentication> authentication, RequestAuthorizationContext object) {
-        return new AuthorizationDecision(ALLOWED_IP_ADDRESS_MATCHER.matches(object.getRequest()));
     }
 
     private AuthenticationFilterNew getAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
