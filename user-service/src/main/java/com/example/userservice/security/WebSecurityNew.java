@@ -41,7 +41,6 @@ public class WebSecurityNew {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        // Configure AuthenticationManagerBuilder
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
@@ -67,7 +66,7 @@ public class WebSecurityNew {
                                                        "hasIpAddress('172.30.1.44') or " +
                                                        "hasIpAddress('172.30.1.44/32')"
                                 )
-                        ) // host pc ip address
+                        )
                         .anyRequest().authenticated()
                 )
                 .authenticationManager(authenticationManager)
