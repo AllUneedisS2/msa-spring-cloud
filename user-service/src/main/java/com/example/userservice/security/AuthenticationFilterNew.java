@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -77,5 +78,7 @@ public class AuthenticationFilterNew  extends UsernamePasswordAuthenticationFilt
 
         res.addHeader("token", token);
         res.addHeader("userId", userDetails.getUserId());
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }

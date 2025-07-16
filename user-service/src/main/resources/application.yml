@@ -7,6 +7,6 @@ spring:
 
 logging:
   level:
-    org.springframework.web: DEBUG     # 스프링 웹(MVC 포함) 관련 요청 처리
-    org.springframework.security: INFO  # 시큐리티 관련 요청 로그
-    org.springframework.boot.web: DEBUG # 내장 톰캣 등 서블릿 관련 처리
+    root: INFO
+    org.springframework.security: DEBUG  # Spring Security 전체 디버깅
+    org.springframework.web: DEBUG       # DispatcherServlet 등 요청 처리

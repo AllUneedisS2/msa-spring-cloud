@@ -50,21 +50,14 @@ public class WebSecurityNew {
         http.csrf( (csrf) -> csrf.disable());
 
         http.authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/welcome")).permitAll()
+                        // POST /login은 자동으로 UsernamePasswordAuthenticationFilter로 매핑
                         .requestMatchers(new AntPathRequestMatcher("/health-check")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/swagger-resources/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/welcome")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
                         .requestMatchers("/**").access(
                                 new WebExpressionAuthorizationManager(
                                         "hasIpAddress('127.0.0.1') or " +
-                                                       "hasIpAddress('::1') or " +
-                                                       "hasIpAddress('0:0:0:0:0:0:0:1') or " +
-                                                       "hasIpAddress('172.30.1.44') or " +
-                                                       "hasIpAddress('172.30.1.44/32')"
+                                                       "hasIpAddress('::1')"
                                 )
                         )
                         .anyRequest().authenticated()

@@ -4,7 +4,3 @@ spring:
   cloud:
     config:
       name: apigateway-service,actuator,eureka,rabbitmq,token
-
-logging:
-  level:
-    org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: DEBUG
