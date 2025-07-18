@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -39,18 +40,6 @@ public class UserServiceImpl implements UserService {
 
     CircuitBreakerFactory circuitBreakerFactory;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByEmail(username);
-
-        if (userEntity == null)
-            throw new UsernameNotFoundException(username + ": not found");
-
-        return new User(userEntity.getEmail(), userEntity.getEncryptedPwd(),
-                true, true, true, true,
-                new ArrayList<>());
-    }
-
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            BCryptPasswordEncoder passwordEncoder,
@@ -66,6 +55,18 @@ public class UserServiceImpl implements UserService {
         this.orderServiceClient = orderServiceClient;
 //        this.catalogServiceClient = catalogServiceClient;
         this.circuitBreakerFactory = circuitBreakerFactory;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity userEntity = userRepository.findByEmail(username);
+
+        if (userEntity == null)
+            throw new UsernameNotFoundException(username + ": not found");
+
+        return new User(userEntity.getEmail(), userEntity.getEncryptedPwd(),
+                true, true, true, true,
+                new ArrayList<>());
     }
 
     @Override
@@ -89,16 +90,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserByUserId(String userId) {
+
         UserEntity userEntity = userRepository.findByUserId(userId);
 
-        if (userEntity == null)
-            throw new UsernameNotFoundException("User not found");
+        if (userEntity == null) throw new UsernameNotFoundException("User not found");
 
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
 
-        log.info("Before call orders microservice");
         List<ResponseOrder> ordersList = new ArrayList<>();
-        /* #1-1 Connect to order-service using a rest template */
+        log.info("Before call order-service, getUserByUserId()");
+        // ordersList = orderServiceClient.getOrders(userId);
+
+        /* RestTemplate */
         /* @LoadBalanced 로 선언헀으면, apigateway-service로 호출 못함 */
         /* http://ORDER-SERVICE/order-service/1234-45565-34343423432/orders */
 //        String orderUrl = String.format(env.getProperty("order_service.url"), userId);
@@ -119,7 +122,7 @@ public class UserServiceImpl implements UserService {
 //        catalogList = catalogListResponse.getBody();
 //        System.out.println(catalogList);
 
-        /* Using a feign client */
+        /* FeignClient */
         /* #2 Feign exception handling */
 //        try {
 ////            ResponseEntity<List<ResponseOrder>> _ordersList = orderServiceClient.getOrders(userId);
@@ -129,12 +132,10 @@ public class UserServiceImpl implements UserService {
 //            log.error(ex.getMessage());
 //        }
 
-        /* #3-1 ErrorDecoder */
-        ordersList = orderServiceClient.getOrders(userId);
-//        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitBreaker1");
-//        CircuitBreaker circuitBreaker2 = circuitBreakerFactory.create("circuitBreaker2");
-//        ordersList = circuitBreaker.run(() -> orderServiceClient.getOrders(userId),
-//                throwable -> new ArrayList<>());
+        /* CircuitBreaker */
+        CircuitBreaker scb = circuitBreakerFactory.create("specificCircuitBreaker");
+        ordersList = scb.run(() -> orderServiceClient.getOrders(userId), throwable -> new ArrayList<>());
+
         /* #3-2 ErrorDecoder for catalog-service */
 //        List<ResponseCatalog> catalogList = catalogServiceClient.getCatalogs();
 

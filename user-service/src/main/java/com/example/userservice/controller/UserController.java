@@ -49,7 +49,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @Operation(summary = "서비스 리소스 확인 API", description = "포트 및 Token Secret 정보 확인 가능")
+    @Operation(summary = "서비스 리소스 출력 API", description = "Port, Token, Welcome 메세지 등 확인")
     @GetMapping("/health-check")
     @Timed(value="user.status", longTask = true)
     public String status() {
@@ -63,7 +63,7 @@ public class UserController {
                 + "\ntoken expiration time=" + env.getProperty("token.expiration_time"));
     }
 
-    @Operation(summary = "환영 메시지 출력 API", description = "Welcome message를 출력하기 위한 API")
+    @Operation(summary = "환영 메시지 출력 API", description = "Welcome 메세지 확인")
     @GetMapping("/welcome")
     @Timed(value="user.welcome", longTask = true)
     public String welcome(HttpServletRequest request, HttpServletResponse response) {
@@ -74,7 +74,7 @@ public class UserController {
         return greeting.getMessage();
     }
 
-    @Operation(summary = "사용자 회원 가입을 위한 API", description = "user-service에 회원 가입을 위한 API")
+    @Operation(summary = "회원가입 API", description = "서비스 사용을 위한 회원 가입")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "CREATED"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
@@ -93,7 +93,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
     }
 
-    @Operation(summary = "전체 사용자 목록 조회 API", description = "현재 회원 가입 된 전체 사용자 목록을 조회하기 위한 API")
+    @Operation(summary = "전체 사용자 목록 조회 API", description = "현재 회원 가입 된 전체 사용자 목록 확인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "401", description = "Unauthorized (인증 실패 오류)"),
@@ -112,7 +112,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @Operation(summary = "사용자 정보 상세조회 API", description = "사용자에 대한 상세 정보조회를 위한 API (사용자 정보 + 주문 내역 확인)")
+    @Operation(summary = "사용자 정보 상세 조회 API", description = "회원 가입 된 특정 사용자 세부 정보 확인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "401", description = "Unauthorized (인증 실패 오류)"),
@@ -130,6 +130,7 @@ public class UserController {
 
         ResponseUser returnValue = new ModelMapper().map(userDto, ResponseUser.class);
 
+        // Hateoas 추가
         EntityModel entityModel = EntityModel.of(returnValue);
         WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).getUsers());
         entityModel.add(linkTo.withRel("all-users"));

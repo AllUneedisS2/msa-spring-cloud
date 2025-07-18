@@ -56,30 +56,8 @@ public class Resilience4JConfig {
                 builder -> builder.circuitBreakerConfig(circuitBreakerConfig)
                                   .timeLimiterConfig(timeLimiterConfig)
                                   .build(),
-                            "circuitBreaker1"
+                            "specificCircuitBreaker"
         );
     }
 
-    @Bean
-    public Customizer<Resilience4JCircuitBreakerFactory> specificCustomConfiguration2() {
-        CircuitBreakerConfig circuitBreakerConfig =
-                CircuitBreakerConfig.custom()
-                                    .failureRateThreshold(8)
-                                    .waitDurationInOpenState(Duration.ofMillis(1000))
-                                    .slidingWindowType(CircuitBreakerConfig.SlidingWindowType.COUNT_BASED)
-                                    .slidingWindowSize(4)
-                                    .build();
-
-        TimeLimiterConfig timeLimiterConfig =
-                TimeLimiterConfig.custom()
-                                 .timeoutDuration(Duration.ofSeconds(4))
-                                 .build();
-
-        return factory -> factory.configure(
-                builder -> builder.circuitBreakerConfig(circuitBreakerConfig)
-                                  .timeLimiterConfig(timeLimiterConfig)
-                                  .build(),
-                            "circuitBreaker2"
-        );
-    }
 }
