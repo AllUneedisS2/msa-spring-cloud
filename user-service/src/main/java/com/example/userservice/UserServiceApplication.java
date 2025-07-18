@@ -1,11 +1,11 @@
 package com.example.userservice;
 
-import com.example.userservice.error.FeignErrorDecoder;
 import feign.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,19 +23,6 @@ public class UserServiceApplication {
     }
 
     @Bean
-//    @LoadBalanced
-    public RestTemplate getRestTemplate() {
-        int TIMEOUT = 5000;
-
-        RestTemplate restTemplate = new RestTemplateBuilder()
-                .setConnectTimeout(Duration.ofMillis(TIMEOUT))
-                .setReadTimeout(Duration.ofMillis(TIMEOUT))
-                .build();
-
-        return restTemplate;
-    }
-
-    @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder()
     {
         return new BCryptPasswordEncoder();
@@ -46,10 +33,14 @@ public class UserServiceApplication {
         return Logger.Level.FULL;
     }
 
+    @Bean
+    @LoadBalanced
+    public RestTemplate getRestTemplate() {
+        int TIMEOUT = 5000;
+        RestTemplate restTemplate = new RestTemplateBuilder().setConnectTimeout(Duration.ofMillis(TIMEOUT))
+                                                             .setReadTimeout(Duration.ofMillis(TIMEOUT))
+                                                             .build();
+        return restTemplate;
+    }
 
-//    @Bean
-//    public FeignErrorDecoder getFeignErrorDecoder() {
-//        return new FeignErrorDecoder();
-//    }
-    
 }

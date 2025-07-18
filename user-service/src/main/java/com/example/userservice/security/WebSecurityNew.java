@@ -53,11 +53,12 @@ public class WebSecurityNew {
 
         http.authorizeHttpRequests(
                 (authz) -> authz
-                        // POST /login은 자동으로 UsernamePasswordAuthenticationFilter로 매핑
-                        .requestMatchers(new AntPathRequestMatcher("/health-check")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/welcome")).permitAll()
+                        .requestMatchers("/health-check").permitAll()
+                        .requestMatchers("/welcome").permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
+                        // POST /login은 자동으로 UsernamePasswordAuthenticationFilter로 매핑
                         .requestMatchers(new AntPathRequestMatcher("/login", "POST")).permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/**").access(
                                 new WebExpressionAuthorizationManager(
                                                 "isAuthenticated() or " +

@@ -49,23 +49,23 @@ public class UserController {
         this.userService = userService;
     }
 
-    @Operation(summary = "Health check API", description = "Health check를 위한 API (포트 및 Token Secret 정보 확인 가능)")
+    @Operation(summary = "서비스 리소스 확인 API", description = "포트 및 Token Secret 정보 확인 가능")
     @GetMapping("/health-check")
-    @Timed(value="users.status", longTask = true)
+    @Timed(value="user.status", longTask = true)
     public String status() {
         return String.format("It's Working in User Service"
-                + ", port(local.server.port)=" + env.getProperty("local.server.port")
-                + ", port(server.port)=" + env.getProperty("server.port")
-                + ", gateway ip(env)=" + env.getProperty("gateway.ip")
-                + ", gateway ip(value)=" + greeting.getIp()
-                + ", message=" + env.getProperty("greeting.message")
-                + ", token secret=" + greeting.getSecret()
-                + ", token expiration time=" + env.getProperty("token.expiration_time"));
+                + "\nport(local.server.port)=" + env.getProperty("local.server.port")
+                + "\nport(server.port)=" + env.getProperty("server.port")
+                + "\ngateway ip(env)=" + env.getProperty("gateway.ip")
+                + "\ngateway ip(value)=" + greeting.getIp()
+                + "\nmessage=" + env.getProperty("greeting.message")
+                + "\ntoken secret=" + greeting.getSecret()
+                + "\ntoken expiration time=" + env.getProperty("token.expiration_time"));
     }
 
     @Operation(summary = "환영 메시지 출력 API", description = "Welcome message를 출력하기 위한 API")
     @GetMapping("/welcome")
-    @Timed(value="users.welcome", longTask = true)
+    @Timed(value="user.welcome", longTask = true)
     public String welcome(HttpServletRequest request, HttpServletResponse response) {
         System.out.println("users.welcome ip:" + request.getRemoteAddr() +
                 "," + request.getRemoteHost() +
@@ -79,8 +79,7 @@ public class UserController {
             @ApiResponse(responseCode = "201", description = "CREATED"),
             @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR"),
-    }
-    )
+    })
     @PostMapping("/users")
     public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user) {
         ModelMapper mapper = new ModelMapper();
@@ -142,6 +141,14 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "Hateoas API", description = "전체 사용자에 대한 Hateoas 조회 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized (인증 실패 오류)"),
+            @ApiResponse(responseCode = "403", description = "Forbidden (권한이 없는 페이지에 엑세스)"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND (회원 정보가 없을 경우)"),
+            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR"),
+    })
     @GetMapping("/users/hateoas")
     public ResponseEntity<CollectionModel<EntityModel<ResponseUser>>> getUsersWithHateoas() {
         List<EntityModel<ResponseUser>> result = new ArrayList<>();
@@ -150,7 +157,6 @@ public class UserController {
         for (UserEntity user : users) {
             EntityModel entityModel = EntityModel.of(user);
             entityModel.add(linkTo(methodOn(this.getClass()).getUser(user.getUserId())).withSelfRel());
-
             result.add(entityModel);
         }
 
