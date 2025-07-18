@@ -21,18 +21,15 @@ public class FeignErrorDecoder implements ErrorDecoder {
     public Exception decode(String methodKey, Response response) {
         switch(response.status()) {
             case 400:
-                break;
+                return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request from Feign client");
             case 404:
                 if (methodKey.contains("getOrders")) {
-                    return new ResponseStatusException(HttpStatus.valueOf(response.status()),
-//                            "User's orders is empty");
-                           env.getProperty("order-service.exception.order-is-empty"));
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            env.getProperty("order-service.exception.order-is-empty", "No orders found"));
                 }
-                break;
+                return new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found");
             default:
                 return new Exception(response.reason());
         }
-
-        return null;
     }
 }

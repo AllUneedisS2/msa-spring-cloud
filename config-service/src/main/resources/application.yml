@@ -20,12 +20,6 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
 
-#  rabbitmq:
-#    host: 127.0.0.1
-#    port: 5672
-#    username: guest
-#    password: guest
-
 management:
   endpoints:
     web:
