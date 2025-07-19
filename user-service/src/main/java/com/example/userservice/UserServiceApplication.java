@@ -33,14 +33,4 @@ public class UserServiceApplication {
         return Logger.Level.FULL;
     }
 
-    @Bean
-    @LoadBalanced
-    public RestTemplate getRestTemplate() {
-        int TIMEOUT = 5000;
-        RestTemplate restTemplate = new RestTemplateBuilder().setConnectTimeout(Duration.ofMillis(TIMEOUT))
-                                                             .setReadTimeout(Duration.ofMillis(TIMEOUT))
-                                                             .build();
-        return restTemplate;
-    }
-
 }

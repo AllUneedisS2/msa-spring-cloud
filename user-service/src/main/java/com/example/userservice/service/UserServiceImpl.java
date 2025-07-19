@@ -4,15 +4,20 @@ import com.example.userservice.client.OrderServiceClient;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.jpa.UserEntity;
 import com.example.userservice.jpa.UserRepository;
+import com.example.userservice.vo.ResponseCatalog;
 import com.example.userservice.vo.ResponseOrder;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,7 +38,6 @@ public class UserServiceImpl implements UserService {
     BCryptPasswordEncoder passwordEncoder;
 
     Environment env;
-    RestTemplate restTemplate;
 
     OrderServiceClient orderServiceClient;
 //    CatalogServiceClient catalogServiceClient;
@@ -44,14 +48,12 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository,
                            BCryptPasswordEncoder passwordEncoder,
                            Environment env,
-                           RestTemplate restTemplate,
                            OrderServiceClient orderServiceClient,
 //                           CatalogServiceClient catalogServiceClient,
                            CircuitBreakerFactory circuitBreakerFactory) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.env = env;
-        this.restTemplate = restTemplate;
         this.orderServiceClient = orderServiceClient;
 //        this.catalogServiceClient = catalogServiceClient;
         this.circuitBreakerFactory = circuitBreakerFactory;
@@ -99,45 +101,15 @@ public class UserServiceImpl implements UserService {
 
         List<ResponseOrder> ordersList = new ArrayList<>();
         log.info("Before call order-service, getUserByUserId()");
-        // ordersList = orderServiceClient.getOrders(userId);
 
-        /* RestTemplate */
-        /* @LoadBalanced 로 선언헀으면, apigateway-service로 호출 못함 */
-        /* http://ORDER-SERVICE/order-service/1234-45565-34343423432/orders */
-//        String orderUrl = String.format(env.getProperty("order_service.url"), userId);
-//        String orderUrl = String.format("http://127.0.0.1:8000/order-service/%s/orders", userId);
-//        ResponseEntity<List<ResponseOrder>> orderListResponse =
-//                restTemplate.exchange(orderUrl, HttpMethod.GET, null,
-//                                            new ParameterizedTypeReference<List<ResponseOrder>>() {
-//                });
-//        ordersList = orderListResponse.getBody();
-        /* #1-2 Connect to catalog-service using a rest template */
-        /* http://CATALOG-SERVICE/catalog-service/catalogs */
-//        List<ResponseCatalog> catalogList = new ArrayList<>();
-//        String catalogUrl = "http://127.0.0.1:8000/catalog-service/catalogs";
-//        ResponseEntity<List<ResponseCatalog>> catalogListResponse =
-//                restTemplate.exchange(catalogUrl, HttpMethod.GET, null,
-//                                            new ParameterizedTypeReference<List<ResponseCatalog>>() {
-//                });
-//        catalogList = catalogListResponse.getBody();
-//        System.out.println(catalogList);
-
-        /* FeignClient */
-        /* #2 Feign exception handling */
-//        try {
-////            ResponseEntity<List<ResponseOrder>> _ordersList = orderServiceClient.getOrders(userId);
-////            ordersList = _ordersList.getBody();
-//            ordersList = orderServiceClient.getOrders(userId);
-//        } catch (FeignException ex) {
-//            log.error(ex.getMessage());
-//        }
-
-        /* CircuitBreaker */
         CircuitBreaker scb = circuitBreakerFactory.create("specificCircuitBreaker");
-        ordersList = scb.run(() -> orderServiceClient.getOrders(userId), throwable -> new ArrayList<>());
-
-        /* #3-2 ErrorDecoder for catalog-service */
-//        List<ResponseCatalog> catalogList = catalogServiceClient.getCatalogs();
+        ordersList = scb.run(
+                () -> orderServiceClient.getOrders(userId),
+                throwable -> {
+                    log.error("Failed to get orders for userId: {}", userId, throwable);
+                    return new ArrayList<>();
+                }
+        );
 
         userDto.setOrders(ordersList);
 
