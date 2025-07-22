@@ -16,9 +16,7 @@
         <module>apigateway-service</module>
         <module>catalog-service</module>
         <module>config-service</module>
-        <module>first-service</module>
         <module>order-service</module>
-        <module>second-service</module>
         <module>discovery-service</module>
         <module>user-service</module>
     </modules>

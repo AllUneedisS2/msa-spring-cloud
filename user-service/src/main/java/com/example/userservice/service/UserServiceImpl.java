@@ -34,15 +34,12 @@ import java.util.UUID;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    UserRepository userRepository;
-    BCryptPasswordEncoder passwordEncoder;
-
     Environment env;
-
+    BCryptPasswordEncoder passwordEncoder;
+    UserRepository userRepository;
+    CircuitBreakerFactory circuitBreakerFactory;
     OrderServiceClient orderServiceClient;
 //    CatalogServiceClient catalogServiceClient;
-
-    CircuitBreakerFactory circuitBreakerFactory;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
@@ -91,17 +88,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserByUserId(String userId) {
+    public UserDto getUserAndOrderByUserId(String userId) {
 
         UserEntity userEntity = userRepository.findByUserId(userId);
-
         if (userEntity == null) throw new UsernameNotFoundException("User not found");
-
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
 
+        log.info("Before call order-service, getUserAndOrderByUserId()");
         List<ResponseOrder> ordersList = new ArrayList<>();
-        log.info("Before call order-service, getUserByUserId()");
-
         CircuitBreaker scb = circuitBreakerFactory.create("specificCircuitBreaker");
         ordersList = scb.run(
                 () -> orderServiceClient.getOrders(userId),
@@ -110,10 +104,8 @@ public class UserServiceImpl implements UserService {
                     return new ArrayList<>();
                 }
         );
-
         userDto.setOrders(ordersList);
-
-        log.info("After called orders microservice");
+        log.info("After call order-service, getUserAndOrderByUserId()");
 
         return userDto;
     }

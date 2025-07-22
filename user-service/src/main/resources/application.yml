@@ -1,12 +1,21 @@
+server:
+  port: 60000
+
 spring:
+  application:
+    name: user-service
   config:
     import: "configserver:http://127.0.0.1:8888"
   cloud:
     config:
-      name: user-service,actuator,eureka,rabbitmq,token
+      name: actuator,eureka,rabbitmq,token,logging,zipkin,database
+
+greeting:
+  message: Welcome to the Simple E-commerce.
+
+gateway:
+  ip: localhost
 
 logging:
   level:
-    root: INFO
-    org.springframework.security: DEBUG  # Spring Security 전체 디버깅
-    org.springframework.web: DEBUG       # DispatcherServlet 등 요청 처리
+    com.example.userservice: DEBUG
