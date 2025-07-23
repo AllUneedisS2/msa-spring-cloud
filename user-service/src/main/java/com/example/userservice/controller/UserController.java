@@ -33,7 +33,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Slf4j
 @RestController
-@RequestMapping
+@RequestMapping("/user-service")
 @Tag(name = "user-controller", description = "일반 사용자 서비스를 위한 컨트롤러입니다.")
 public class UserController {
 

@@ -53,11 +53,14 @@ public class WebSecurityNew {
 
         http.authorizeHttpRequests(
                 (authz) -> authz
-                        .requestMatchers("/health-check").permitAll()
-                        .requestMatchers("/welcome").permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/users", "POST")).permitAll()
+                        .requestMatchers("/health-check", "/welcome").permitAll()
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/user-service/users", "POST")
+                        ).permitAll()
                         // POST /login은 자동으로 UsernamePasswordAuthenticationFilter로 매핑
-                        .requestMatchers(new AntPathRequestMatcher("/login", "POST")).permitAll()
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/user-service/login", "POST")
+                        ).permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/**").access(
                                 new WebExpressionAuthorizationManager(
@@ -69,6 +72,10 @@ public class WebSecurityNew {
         )
         .authenticationManager(authenticationManager)
         .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        AuthenticationFilterNew authenticationFilter =
+                new AuthenticationFilterNew(authenticationManager, userService, env, jwtUtil);
+        authenticationFilter.setFilterProcessesUrl("/user-service/login");
 
         http
                 .addFilterBefore(
@@ -82,7 +89,7 @@ public class WebSecurityNew {
                 )
                 .addFilter(
                         // 로그인 필터
-                        new AuthenticationFilterNew(authenticationManager, userService, env, jwtUtil)
+                        authenticationFilter
                 );
 
         http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()));
