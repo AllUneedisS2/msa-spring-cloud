@@ -5,26 +5,17 @@ import com.example.userservice.utils.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authorization.AuthorizationDecision;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.IpAddressMatcher;
-
-import java.util.function.Supplier;
 
 
 @Configuration
@@ -53,11 +44,12 @@ public class WebSecurityNew {
 
         http.authorizeHttpRequests(
                 (authz) -> authz
-                        .requestMatchers("/health-check", "/welcome").permitAll()
+                        .requestMatchers(
+                                "/user-service/welcome"
+                        ).permitAll()
                         .requestMatchers(
                                 new AntPathRequestMatcher("/user-service/users", "POST")
                         ).permitAll()
-                        // POST /login은 자동으로 UsernamePasswordAuthenticationFilter로 매핑
                         .requestMatchers(
                                 new AntPathRequestMatcher("/user-service/login", "POST")
                         ).permitAll()

@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 20000
 
 spring:
   application:
@@ -8,7 +8,7 @@ spring:
     import: "configserver:http://127.0.0.1:8888"
   cloud:
     config:
-      name: actuator,eureka,rabbitmq,token,logging,zipkin,database
+      name: actuator,database,eureka,logging,prometheus,rabbitmq,token,zipkin
   jpa:
     defer-datasource-initialization: true
   sql:
@@ -21,4 +21,4 @@ logging:
 
 catalog:
   consumer:
-    group-id: ${CONSUMER_GROUP_ID:catalogConsumer}
+    group-id: catalogConsumer

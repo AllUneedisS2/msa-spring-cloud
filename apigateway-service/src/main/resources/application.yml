@@ -8,7 +8,7 @@ spring:
     import: "configserver:http://127.0.0.1:8888"
   cloud:
     config:
-      name: actuator,eureka,rabbitmq,token,logging
+      name: actuator,database,eureka,logging,prometheus,rabbitmq,token,zipkin
     gateway:
       default-filters:
         - name: GlobalFilter
@@ -20,7 +20,7 @@ spring:
         - id: user-service-public
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/health-check,/user-service/welcome
+            - Path=/user-service/welcome
             - Method=GET
           filters:
             - RemoveRequestHeader=Cookie

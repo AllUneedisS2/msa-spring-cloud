@@ -8,7 +8,7 @@ spring:
     import: "configserver:http://127.0.0.1:8888"
   cloud:
     config:
-      name: actuator,eureka,rabbitmq,token,logging,zipkin,database
+      name: actuator,database,eureka,logging,prometheus,rabbitmq,token,zipkin
 
 logging:
   level:
