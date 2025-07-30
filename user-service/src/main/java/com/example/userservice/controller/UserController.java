@@ -3,7 +3,7 @@ package com.example.userservice.controller;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.jpa.UserEntity;
 import com.example.userservice.service.UserService;
-import com.example.userservice.vo.Greeting;
+import com.example.userservice.vo.Properties;
 import com.example.userservice.vo.RequestUser;
 import com.example.userservice.vo.ResponseUser;
 import io.micrometer.core.annotation.Timed;
@@ -41,7 +41,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private Greeting greeting;
+    private Properties properties;
 
     @Autowired
     public UserController(Environment env, UserService userService) {
@@ -56,11 +56,9 @@ public class UserController {
         return String.format("It's Working in User Service"
                 + "\nport(local.server.port)=" + env.getProperty("local.server.port")
                 + "\nport(server.port)=" + env.getProperty("server.port")
-                + "\ngateway ip(env)=" + env.getProperty("gateway.ip")
-                + "\ngateway ip(value)=" + greeting.getIp()
                 + "\nmessage=" + env.getProperty("greeting.message")
-                + "\ntoken secret=" + greeting.getSecret()
-                + "\ntoken expiration time=" + env.getProperty("token.expiration_time"));
+                + "\ntoken secret=" + properties.getSecret()
+                + "\ntoken expiration time=" + properties.getTokenExpTime());
     }
 
     @Operation(summary = "환영 메시지 출력 API", description = "Welcome 메세지 확인")
@@ -71,7 +69,7 @@ public class UserController {
                 "," + request.getRemoteHost() +
                 "," + request.getRequestURI() +
                 "," + request.getRequestURL());
-        return greeting.getMessage();
+        return properties.getMessage();
     }
 
     @Operation(summary = "회원가입 API", description = "서비스 사용을 위한 회원 가입")

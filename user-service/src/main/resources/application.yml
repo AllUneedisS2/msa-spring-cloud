@@ -14,10 +14,6 @@ spring:
 greeting:
   message: Welcome to the MSA World.
 
-gateway:
-#  ip: 127.0.0.1
-  ip: apigateway-service
-
 logging:
   level:
     com.example.userservice: DEBUG
