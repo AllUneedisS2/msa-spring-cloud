@@ -1,6 +1,5 @@
 encrypt:
     key-store:
-#        location: file:/Users/ikerbm94/bmdk594/workspace/msa-spring-cloud/config-service/apiEncryptionKey.jks
-        location: file:/apiEncryptionKey.jks
+        location: classpath:apiEncryptionKey.jks
         password: test1234
         alias: apiEncryptionKey

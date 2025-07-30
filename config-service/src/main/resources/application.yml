@@ -13,8 +13,7 @@ spring:
     bus:
       enabled: true
   rabbitmq:
-#    host: 127.0.0.1
-    host: rabbitmq
+    host: 127.0.0.1
     port: 5672
     username: guest
     password: '{cipher}AQA7yBzncaNXtAAROjIyreoI4WrbQeI/NHDLkImL6JVx4PFbxoTCE2Rv+Mb2Fxit3Jb+SnZNcDf7naNLFWI2mtu/KwmE1/ettrISBDJewJRamyOaCz/wWrw7cLf08GG+yBzVUVnWV5TUfSCsB/mk++UtvCvJEBdpqOVyOb4qlducrfTmKuyYNhtzSdLBz9EvgsXAjzLpn7zDFuRIeia3nEEkQcsyC0OmdTVeM24Nv7H/wv4Ljdw0x25bxjPM44VuHnvgv5/g9v+3rUc9WD8p6Myq4PrW/WOQPSnuzVVM6V/v0s/g0GjJ1nZBg70GTRbZwToG+VgpffXBLKqlnFjKEQB+ofIG86qlNUc+TTW26781j61Dy6RP7DvRQ9AENj5rG4k='
@@ -27,8 +26,7 @@ eureka:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
     service-url:
-#      defaultZone: http://localhost:8761/eureka
-      defaultZone: http://discovery-service:8761/eureka
+      defaultZone: http://localhost:8761/eureka
     fetch-registry: true
     register-with-eureka: true
 
@@ -36,4 +34,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: env,health,info,beans,refresh,busrefresh,httpexchanges,metrics,prometheus
+        include: env,health,info,beans,refresh,busrefresh,httpexchanges,metrics

@@ -5,11 +5,10 @@ spring:
   application:
     name: catalog-service
   config:
-#    import: "configserver:http://127.0.0.1:8888"
-    import: "configserver:http://config-service:8888"
+    import: "configserver:http://127.0.0.1:8888"
   cloud:
     config:
-      name: actuator,database,eureka,logging,prometheus,rabbitmq,token,zipkin
+      name: actuator,database,eureka,logging,rabbitmq,token,zipkin,kafka
   jpa:
     defer-datasource-initialization: true
   sql:

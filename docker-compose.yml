@@ -1,34 +1,30 @@
-version: '2'
 services:
-  config-service:
-    image: edowon0623/config-service:test
-    ports:
-      - "8888:8888"
-    networks:
-      my-network:
-
-  discovery-service:
-    image: edowon0623/service-discovery:test
-    ports:
-      - "8761:8761"
-    networks:
-      my-network:
-
-  user-service:
-    image: edowon0623/user-service:test
-    ports:
-      - "60000:60000"
+  kafka:
+    image: apache/kafka:3.7.2
     environment:
-      spring.cloud.config.uri: http://config-service:8888
-      eureka.client.serviceUrl.defaultZone: http://discovery-service:8761/eureka/
-      logging.file: /api-logs/users-ws.log
-    depends_on:
-      - config-service
-    networks:
-      my-network:
-#        ipv4_address: 172.18.0.12
+      # uuidgen 으로 생성한 클러스터 ID
+      KAFKA_CLUSTER_ID: "YOUR-UUID-HERE"
+      KAFKA_NODE_ID: "1"
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      # 브로커(클라이언트)용과 컨트롤러용을 분리
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
+      # 외부/IDE는 localhost:9092 로만 접속
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+    ports:
+      - "9092:9092"   # 외부 노출
+      # 9093은 내부 컨테이너 간 통신용이므로 매핑하지 않아도 됩니다
 
-networks:
-  my-network:
-    external: true
-    name: my-network
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  zipkin:
+    image: openzipkin/zipkin:2.23
+    ports:
+      - "9411:9411"
