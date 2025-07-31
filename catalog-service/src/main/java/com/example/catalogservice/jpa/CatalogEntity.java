@@ -3,14 +3,14 @@ package com.example.catalogservice.jpa;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "catalog")
-public class CatalogEntity { // implements Serializable {
+public class CatalogEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

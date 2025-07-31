@@ -10,7 +10,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Component
 public class FeignErrorDecoder implements ErrorDecoder {
-
     Environment env;
 
     @Autowired
@@ -22,15 +21,17 @@ public class FeignErrorDecoder implements ErrorDecoder {
     public Exception decode(String methodKey, Response response) {
         switch(response.status()) {
             case 400:
-                return new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request from Feign client");
+                break;
             case 404:
                 if (methodKey.contains("getOrders")) {
-                    return new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            env.getProperty("order-service.exception.order-is-empty", "No orders found"));
+                    return new ResponseStatusException(HttpStatus.valueOf(response.status()),
+                           "User's orders is empty");
                 }
-                return new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found");
+                break;
             default:
                 return new Exception(response.reason());
         }
+
+        return null;
     }
 }

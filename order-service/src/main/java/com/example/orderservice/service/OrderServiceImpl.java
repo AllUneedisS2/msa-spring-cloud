@@ -12,7 +12,6 @@ import java.util.UUID;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-
     OrderRepository orderRepository;
 
     @Autowired
@@ -40,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto getOrderByOrderId(String orderId) {
         OrderEntity orderEntity = orderRepository.findByOrderId(orderId);
         OrderDto orderDto = new ModelMapper().map(orderEntity, OrderDto.class);
+
         return orderDto;
     }
 

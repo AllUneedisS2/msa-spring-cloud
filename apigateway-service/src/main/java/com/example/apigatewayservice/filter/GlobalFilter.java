@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 @Component
 @Slf4j
 public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Config> {
-
     public GlobalFilter() {
         super(Config.class);
     }
@@ -35,11 +34,14 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
         });
     }
 
+//    public abstract Mono<Void> filter(
+//            ServerWebExchange exchange,
+//            GatewayFilterChain chain);
+
     @Data
     public static class Config {
         private String baseMessage;
         private boolean preLogger;
         private boolean postLogger;
     }
-    
 }

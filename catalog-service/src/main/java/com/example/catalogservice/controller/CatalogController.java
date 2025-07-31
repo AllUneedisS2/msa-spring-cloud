@@ -20,7 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/catalog-service")
 public class CatalogController {
-
     Environment env;
     CatalogService catalogService;
 
@@ -33,7 +32,7 @@ public class CatalogController {
         this.catalogService = catalogService;
     }
 
-    @GetMapping("/health-check")
+    @GetMapping("/health_check")
     public String status() {
         List<ServiceInstance> serviceList = getApplications();
         for (ServiceInstance instance : serviceList) {
